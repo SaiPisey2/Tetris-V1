@@ -1,0 +1,21 @@
+name: Deploy to EKS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: [self-hosted]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Update kubeconfig
+        run: aws eks --region ap-south-1 update-kubeconfig --name EKS_CLOUD
+
+      - name: Deploy to EKS
+        run: kubectl delete -f deployment-service.yml
+
