@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/SaiPisey2/Tetris-V1.git'
+            }
+        }
+        stage('Terraform init') {
+            steps {
+                dir('Eks-terraform') {
+                    sh 'terraform init -reconfigure'
+                }
+            }
+        }
+        stage('Terraform Validate') {
+            steps {
+                dir('Eks-terraform') {
+                    sh 'terraform validate'
+                }
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                dir('Eks-terraform') {
+                    sh 'terraform plan'
+                }
+            }
+        }
+        stage('Terraform Apply or Destroy') {
+            steps {
+                dir('Eks-terraform') {
+                    sh 'terraform ${action} --auto-approve  '
+                }
+            }
+        }
+    }
+}
